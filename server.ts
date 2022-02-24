@@ -10,23 +10,24 @@ import dataController from './controllers/postDataController'
 
 
 // const mongoose = require('mongoose')//for database
-const MONGODB_URI = 'mongodb://localhost:27017/learn'
+// const MONGODB_URI = 'mongodb://localhost:27017/learn'//connects to local database
 const db = mongoose.connection;
+dotenv.config()
 // middlewaregit
 const app = express();
-dotenv.config()
 
 app.use(cookieParser())
-let whitelist = ['http://localhost:3003']
-const corsOptions: CorsOptions = {
-  credentials: true,
-  origin: whitelist
-}
-app.use(cors(corsOptions));
-const PORT = process.env.PORT || 3003
-// const MONGODB_URI = process.env.MONGODB_URI
 
-mongoose.connect(MONGODB_URI);
+// let whitelist = ['http://localhost:3003']
+// const corsOptions: CorsOptions = {
+//   credentials: true,
+//   origin: whitelist
+// }
+app.use(cors());
+const PORT = process.env.PORT || 3003
+const MONGODB_URI = process.env.MONGODB_URI
+
+mongoose.connect(MONGODB_URI!);
 
 db.on('error', (err) => console.log(err.message + ' is Mongod not running?'));
 db.on('connected', () => console.log('mongo connected: ', MONGODB_URI));
