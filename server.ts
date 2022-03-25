@@ -18,11 +18,11 @@ const app = express();
 
 app.use(cookieParser())
 
-// let whitelist = ['http://localhost:3003']
-// const corsOptions: CorsOptions = {
-//   credentials: true,
-//   origin: whitelist
-// }
+let whitelist = ['http://localhost:3003']
+const corsOptions: CorsOptions = {
+  credentials: true,
+  origin: whitelist
+}
 app.use(cors());
 const PORT = process.env.PORT || 3003
 const MONGODB_URI = process.env.MONGODB_URI
