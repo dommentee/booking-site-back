@@ -41,11 +41,13 @@ app.use('/postdata', dataController)
 app.get('/', (req, res) => {
   res.send('this is the back')
 })
+
+
 // mongoose.connect(MONGODB_URI, () => {
 //   console.log(('connect with mongod'));
   
 // })
   
 app.listen(PORT, () => {
-  console.log('listening to', PORT)
+  console.log(`listening to http://localhost:${PORT}`)
 })
