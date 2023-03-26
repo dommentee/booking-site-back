@@ -1,29 +1,29 @@
 //express/cors/mongoose/jwt/dotenv/cookie parser
 import express from 'express';
-import dotenv from 'dotenv'
-import mongoose from 'mongoose'
-import cors, {CorsOptions} from 'cors'
-import cookieParser from 'cookie-parser'
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+import cors, {CorsOptions} from 'cors';
+import cookieParser from 'cookie-parser';
 
 //controllers
-import dataController from './controllers/postDataController'
-import userController from './controllers/userController'
+import userController from './controllers/userController';
+import service from './routes/service'
 import { authMiddleWare } from './middleware/isAuth';
 
-
-const MONGODB_URI = 'mongodb://localhost:27017/learn'//connects to local database
-const db = mongoose.connection;
-dotenv.config()
-// middlewaregit
 const app = express();
 
-app.use(cookieParser())
+const MONGODB_URI = 'mongodb://localhost:27017/learn';//connects to local database
+const db = mongoose.connection;
+dotenv.config();
+// middlewaregit
 
-let whitelist = ['http://localhost:3000']
+app.use(cookieParser());
+
+let whitelist = ['http://localhost:3000'];
 const corsOptions: CorsOptions = {
   credentials: true,
   origin: whitelist
-}
+};
 
 
 app.use(cors());
@@ -44,8 +44,10 @@ app.get('/', (req, res) => {
   res.send('this is the back')
 })
 
-app.use('/postdata', dataController)
-app.use('/users',userController)
+//service
+app.use('/api/v1/service',service);
+// app.use('/postdata', dataController)
+// app.use('/users',userController)
 
 
 mongoose.connect(MONGODB_URI, () => {
