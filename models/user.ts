@@ -1,47 +1,78 @@
 import mongoose from "mongoose";
+import validator from 'validator';
+import bcrypt from 'bcrypt';
+
 const { Schema, Document } = mongoose
 
-export interface IUser {//to merge the fields to the inside mongodb with the schema
+export interface IUser extends mongoose.Document {//to merge the fields to the inside mongodb with the schema
     _id: mongoose.ObjectId
     firstName: string,
     lastName: string,
     email: string
     password: string,
-    isAdmin: boolean
-    authCount: number
+    role: string,
+    comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 // methods are part of document
 export interface IUserDocument extends IUser, Document {
-    
+  
 }
   
   // statics are part of model
 export interface IUserModel extends mongoose.Model<IUserDocument> {
-    
+      
 }
 
-
-const userSchema: mongoose.Schema<IUserDocument> = new Schema(
+const userSchema: mongoose.Schema<IUserDocument> = new mongoose.Schema(
 
     {   
-        firstName: {type: String, required: [true, 'first name is required']},
-        lastName: {type: String, required: [true, 'last name is required']},
+        firstName: {
+            type: String,
+            minlength: 2,
+            maxlength: 30,
+            required: [true, 'Please provide first name']
+        },
+        lastName: {type: String,
+            minlength: 2,
+            maxlength: 30,
+            required: [true, 'Please provide last name']
+        },
         email: {
             type: String,
             unique: true,
-            required: [true, 'email is required']
+            required: [true, 'Please provide email'],
+            validate: {
+                validator: validator.isEmail,
+                message: 'Please provide valid email',
+            }
         },
         password:{
             type: String,
             required: [true, 'password is requred'],
-            minlength: [5, 'password must be 5 characters or more']
-        }, 
-        isAdmin: {
-            type: Boolean,
-            default: false
+            minlength: [8, 'password must be 8 characters or more']
         },
-        authCount: Number
+        role: {
+            type: String,
+            enum: ['admin', 'user'],
+            default: 'user'
+        },
+        
     }
 )
+
+userSchema.pre('save', async function() {
+    const salt  = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+})
+
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+    let password = this.password;
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(candidatePassword, password, (err, success) => {
+            if (err) return reject(err);
+            return resolve(success);
+        });
+    });
+};
 export const User = mongoose.model<IUserDocument,IUserModel>("User", userSchema);
