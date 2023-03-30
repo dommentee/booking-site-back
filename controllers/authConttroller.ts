@@ -2,7 +2,7 @@ import { error } from "console";
 import {Request, Response} from "express";
 import { StatusCodes } from 'http-status-codes';
 import { User } from "../models/user";
-import {createJwt} from '../utils/jwt'
+import { attachCookieToResponse } from "../utils/jwt";
 // import customError from '../errors';//need error files 
 
 const register = async (req: Request, res: Response) => {
@@ -18,23 +18,40 @@ const register = async (req: Request, res: Response) => {
     //do not include roles so its in req.body
     const user = await User.create({firstName, lastName, email, password});
     const tokenUser = {userId: user._id, firstName: user.firstName, lastName: user.lastName, role: user.role }
-    const token = createJwt({payload: tokenUser})
-
-    const oneday = 1000 * 60 * 60 * 24;
-    res.cookie('token', token, {
-        httpOnly: true,
-        expires: new Date(Date.now() + oneday)
-
-    })
-    res.status(StatusCodes.CREATED).json({user: tokenUser,})
+    attachCookieToResponse(res, {user: tokenUser})
+    res.status(StatusCodes.CREATED).json({user: tokenUser})
 }
 
 const login = async (req: Request, res: Response) => {
-    res.send('login user');
+    const {email, password} = req.body;
+    if(!email || !password) {
+        throw new Error('Please provide email and password');
+    }
+    //check if email exist
+    const user = await  User.findOne({email});
+    
+    if(!user) {
+        //throw new unauthenthicatedErrro 404
+        throw new Error('Invalid Creditionals');
+    }
+    const isPasswordCorrect = await user.comparePassword(password);
+
+    if(!isPasswordCorrect) {
+        throw new Error('Invalid Creditionals');
+    }
+    
+    const tokenUser = {userId: user._id, firstName: user.firstName, lastName: user.lastName, role: user.role }
+    attachCookieToResponse(res, {user: tokenUser})
+    res.status(StatusCodes.CREATED).json({user: tokenUser})
 }
 
 const logout = async (req: Request, res: Response) => {
-    res.send('log out user');
+    res.cookie('token', 'logout', {
+        httpOnly: true,
+        expires: new Date(Date.now() + 5 * 1000), 
+    }) 
+    //no need to send anything
+    
 }
 
 

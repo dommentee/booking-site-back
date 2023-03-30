@@ -22,7 +22,7 @@ dotenv.config();
 app.use(cors());
 app.use(morgan('tiny'));
 app.use(express.json())//call express.json for data
-app.use(cookieParser());
+app.use(cookieParser(process.env.JWT_SECRET));
 
 // app.use(authMiddleWare)
 

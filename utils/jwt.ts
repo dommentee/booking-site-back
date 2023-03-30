@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken'; 
-
+import  {Request, Response} from "express";
+import jwt from 'jsonwebtoken';
 
 export const createJwt = (payload: any) => {
     const token = jwt.sign(payload, process.env.JWT_SECRET as string,
@@ -9,3 +9,15 @@ export const createJwt = (payload: any) => {
 }
 
 export const isTokenValid = (token: any) => jwt.verify(token, process.env.JWT_SECRET as string);
+
+export const attachCookieToResponse = (res: Response, user: any) => {
+    const token = createJwt({payload: user});
+    const oneday = 1000 * 60 * 60 * 24;
+    res.cookie('token', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + oneday),
+        secure: process.env.NODE_ENV === 'production',
+        signed: true
+    })
+
+}
