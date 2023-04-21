@@ -2,7 +2,7 @@ import { error } from "console";
 import {Request, Response} from "express";
 import { StatusCodes } from 'http-status-codes';
 import { User } from "../models/user";
-import { attachCookieToResponse } from "../utils/jwt";
+import { attachCookiesToResponse } from "../utils/jwt";
 // import customError from '../errors';//need error files 
 
 const register = async (req: Request, res: Response) => {
@@ -16,9 +16,9 @@ const register = async (req: Request, res: Response) => {
     const isFirstAccount = (await User.countDocuments({})) === 0;
     const role = isFirstAccount ? 'admin' : 'user';
     //do not include roles so its in req.body
-    const user = await User.create({firstName, lastName, email, password});
-    const tokenUser = {userId: user._id, firstName: user.firstName, lastName: user.lastName, role: user.role }
-    attachCookieToResponse(res, {user: tokenUser})
+    const user = await User.create({firstName, lastName, email, password, role});
+    const tokenUser = user;
+    attachCookiesToResponse(res, {user: tokenUser})
     res.status(StatusCodes.CREATED).json({user: tokenUser})
 }
 
@@ -34,14 +34,15 @@ const login = async (req: Request, res: Response) => {
         //throw new unauthenthicatedErrro 404
         throw new Error('Invalid Creditionals');
     }
+    //if user
     const isPasswordCorrect = await user.comparePassword(password);
-
+    //if password is false 
     if(!isPasswordCorrect) {
         throw new Error('Invalid Creditionals');
     }
     
     const tokenUser = {userId: user._id, firstName: user.firstName, lastName: user.lastName, role: user.role }
-    attachCookieToResponse(res, {user: tokenUser})
+    attachCookiesToResponse(res, {user: tokenUser})
     res.status(StatusCodes.CREATED).json({user: tokenUser})
 }
 
@@ -49,9 +50,9 @@ const logout = async (req: Request, res: Response) => {
     res.cookie('token', 'logout', {
         httpOnly: true,
         expires: new Date(Date.now() + 5 * 1000), 
-    }) 
+    });
     //no need to send anything
-    
+    res.status(200).json('user looged out')
 }
 
 

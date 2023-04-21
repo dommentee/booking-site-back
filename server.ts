@@ -13,9 +13,9 @@ import notFound from './middleware/notFound';
 import errorHandlerMiddleware from './middleware/error-handler';
 
 //controllers
-import authRouter from './routes/authRoute'
-import service from './routes/service'
-// import { authMiddleWare } from './middleware/isAuth';
+import authRouter from './routes/authRoute';
+import userRouter from './routes/userRoutes';
+import serviceRouter from './routes/serviceRoute';
 
 const app = express();
 dotenv.config();
@@ -39,9 +39,10 @@ connectDB(process.env.LOCALDB);
 app.get('/', (req, res) => {
   res.send('This is the book app')
 })
-//service
-app.use('/api/v1/service',service);
+//set routes app will use
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users',userRouter);
+app.use('/api/v1/service',serviceRouter);
 //middleware
 app.use(notFound);//404
 app.use(errorHandlerMiddleware);//error handler
