@@ -3,47 +3,51 @@ import {Request, Response} from "express";
 import { StatusCodes } from 'http-status-codes';
 import { User } from "../models/user";
 import { attachCookiesToResponse } from "../utils/jwt";
+import { createTokenUser } from "../utils/createTokenUser";
 // import customError from '../errors';//need error files 
 
+//register
 const register = async (req: Request, res: Response) => {
     const {firstName, lastName, email, password}  = req.body;
-    const emailExist = await User.findOne({email});
-    // if(emailExist) {
-    //     throw new customError.BadRequestError('email aleady exist');
-        
-    // }
+    const emailAlreadyExist = await User.findOne({email});
+    if(emailAlreadyExist) {
+        throw new Error('email aleady exist');
+        // throw new customError.BadRequestError('email aleady exist');       
+    }
 
     const isFirstAccount = (await User.countDocuments({})) === 0;
     const role = isFirstAccount ? 'admin' : 'user';
     //do not include roles so its in req.body
     const user = await User.create({firstName, lastName, email, password, role});
-    const tokenUser = user;
+    const tokenUser = createTokenUser(user);
     attachCookiesToResponse(res, {user: tokenUser})
     res.status(StatusCodes.CREATED).json({user: tokenUser})
 }
 
+///login
 const login = async (req: Request, res: Response) => {
     const {email, password} = req.body;
     if(!email || !password) {
         throw new Error('Please provide email and password');
     }
     //check if email exist
-    const user = await  User.findOne({email});
+    const user = await User.findOne({email});
     
     if(!user) {
         //throw new unauthenthicatedErrro 404
-        throw new Error('Invalid Creditionals');
+        throw new Error('User not found');
     }
     //if user
     const isPasswordCorrect = await user.comparePassword(password);
+    
     //if password is false 
     if(!isPasswordCorrect) {
         throw new Error('Invalid Creditionals');
     }
     
-    const tokenUser = {userId: user._id, firstName: user.firstName, lastName: user.lastName, role: user.role }
+    const tokenUser = createTokenUser(user) 
     attachCookiesToResponse(res, {user: tokenUser})
-    res.status(StatusCodes.CREATED).json({user: tokenUser})
+    res.status(StatusCodes.OK).json({user: tokenUser})
 }
 
 const logout = async (req: Request, res: Response) => {

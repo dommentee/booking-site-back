@@ -5,11 +5,12 @@ import { authenthicateUser,  authorizePermission } from '../middleware/authentic
 
 //all routes will be authenticated
 //authenticate user then get role
-router.route('/').get(authenthicateUser,  authorizePermission,  userController.getAllUsers);
+//then get access to route is approreite
+router.route('/').get(authenthicateUser, authorizePermission('admin', 'employee'), userController.getAllUsers);
 //show me before getting id
-router.route('/showMe').get(userController.showCurrentUser);
-router.route('/updateUser').patch(userController.updateUser);
-router.route('/updateUserPassword').patch(userController.updateUserPassword);
+router.route('/showMe').get(authenthicateUser, userController.showCurrentUser);
+router.route('/updateUser').patch(authenthicateUser, userController.updateUser);
+router.route('/updateUserPassword').patch(authenthicateUser, userController.updateUserPassword);
 
 router.route('/:id').get(authenthicateUser, userController.getSingleUser);
 

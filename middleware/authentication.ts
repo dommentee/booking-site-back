@@ -1,5 +1,5 @@
 // import CustomError from '../errors';
-import {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction, } from 'express';
 
 import {isTokenValid} from '../utils/jwt';
 //import { IGetUserAuthInfoRequest } from '../utils/IGetUserAuthInfoRequest';
@@ -22,12 +22,13 @@ export const authenthicateUser = async (req: any, res:Response, next: NextFuncti
 }
 
 //autherize permissions
-//need to come back and add status codes 
-export const authorizePermission = async ( req: any, res: Response, next: NextFunction) => {
-   if(req.user.payload.user.role !== 'admin') {
-       return res.status(403).json('Unautherize to access to this route');
-   }
-    next();
-    
-    
+//map through the array roles
+export const authorizePermission:any =  (...roles: any) => {
+
+    return (req: any, res: Response, next: NextFunction) => {
+        if(!roles.includes(req.user.payload.user.role)) {
+            throw new Error('Unauthorized to this route');
+        }
+        next();
+    }
 }

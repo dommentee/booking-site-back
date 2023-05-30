@@ -61,15 +61,24 @@ const userSchema: mongoose.Schema<IUserDocument> = new mongoose.Schema(
     }
 )
 
+//hash password
 userSchema.pre('save', async function() {
+    //save is called to modify other user info
+    //this will call this function and rehash the password resulting in wrong password
+    //bypass this
+    if(!this.isModified('password')) {
+        return;
+    } 
     const salt  = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password.trim(), salt);
 })
 
+//login 
 userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
     let password = this.password;
     return new Promise((resolve, reject) => {
         bcrypt.compare(candidatePassword, password, (err, success) => {
+            
             if (err) return reject(err);
             return resolve(success);
         });
