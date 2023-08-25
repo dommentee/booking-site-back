@@ -20,11 +20,10 @@ import serviceRouter from './routes/serviceRoute';
 const app = express();
 dotenv.config();
 app.use(cors());
-app.use(morgan('tiny'));
+app.use(morgan('tiny'));//gets routes info
 app.use(express.json())//call express.json for data
 app.use(cookieParser(process.env.JWT_SECRET));
 
-// app.use(authMiddleWare)
 
 let whitelist = ['http://localhost:3000'];
 const corsOptions: CorsOptions = {
@@ -37,7 +36,7 @@ const corsOptions: CorsOptions = {
 connectDB(process.env.LOCALDB);
 
 app.get('/', (req, res) => {
-  res.send('This is the book app')
+  res.send('This is the booking app')
 })
 //set routes app will use
 app.use('/api/v1/auth', authRouter);

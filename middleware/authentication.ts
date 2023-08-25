@@ -6,7 +6,7 @@ import {isTokenValid} from '../utils/jwt';
 //import customError
 //check if the cookie is present
 export const authenthicateUser = async (req: any, res:Response, next: NextFunction) => {
-    const token = req.signedCookies.token
+    const token = req.signedCookies.token;
     if(!token) {
        return res.status(403).json('Authentication invalid');
     }
@@ -23,7 +23,7 @@ export const authenthicateUser = async (req: any, res:Response, next: NextFuncti
 
 //autherize permissions
 //map through the array roles
-export const authorizePermission:any =  (...roles: any) => {
+export const authorizePermission:any = (...roles: any) => {
 
     return (req: any, res: Response, next: NextFunction) => {
         if(!roles.includes(req.user.payload.user.role)) {

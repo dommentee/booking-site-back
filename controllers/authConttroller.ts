@@ -1,4 +1,3 @@
-import { error } from "console";
 import {Request, Response} from "express";
 import { StatusCodes } from 'http-status-codes';
 import { User } from "../models/user";
@@ -37,17 +36,19 @@ const login = async (req: Request, res: Response) => {
         //throw new unauthenthicatedErrro 404
         throw new Error('User not found');
     }
+
     //if user
+    //use a userschema method that comapares passwords
     const isPasswordCorrect = await user.comparePassword(password);
     
-    //if password is false 
+    //if does not match 
     if(!isPasswordCorrect) {
         throw new Error('Invalid Creditionals');
     }
     
-    const tokenUser = createTokenUser(user) 
-    attachCookiesToResponse(res, {user: tokenUser})
-    res.status(StatusCodes.OK).json({user: tokenUser})
+    const tokenUser = createTokenUser(user); 
+    attachCookiesToResponse(res, {user: tokenUser});
+    res.status(StatusCodes.OK).json({user: tokenUser});
 }
 
 const logout = async (req: Request, res: Response) => {
