@@ -32,8 +32,17 @@ const corsOptions: CorsOptions = {
 };
 
 //database
-// connectDB(process.env.MONGODB_URI);atlas
-connectDB(process.env.LOCALDB);
+//atlas
+// connectDB(process.env.MONGODB_URI);
+
+//local DB
+//connectDB(process.env.LOCALDB);
+
+//docker
+// connectDB(process.env.NODE_DOCKER_PORT);
+
+//call connect to start database
+connectDB();
 
 app.get('/', (req, res) => {
   res.send('This is the booking app')
@@ -47,7 +56,8 @@ app.use(notFound);//404
 app.use(errorHandlerMiddleware);//error handler
 
 
-const PORT = process.env.PORT || 3003
+// const PORT = process.env.PORT || 3003
+const PORT = process.env.NODE_DOCKER_PORT || 8080
 app.listen(PORT, () => {
   console.log(`listening to http://localhost:${PORT}`)
 })

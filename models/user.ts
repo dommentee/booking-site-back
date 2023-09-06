@@ -8,15 +8,16 @@ export interface IUser extends mongoose.Document {//to merge the fields to the i
     _id: mongoose.ObjectId
     firstName: string,
     lastName: string,
-    email: string
+    email: string,
     password: string,
     role: string,
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
+
 // methods are part of document
 export interface IUserDocument extends IUser, Document {
-  
+ 
 }
   
   // statics are part of model
@@ -43,7 +44,7 @@ const userSchema: mongoose.Schema<IUserDocument> = new mongoose.Schema(
             unique: true,
             required: [true, 'Please provide email'],
             validate: {
-                validator: validator.isEmail,
+                validator: (str: string) => validator.isEmail(str),
                 message: 'Please provide valid email',
             }
         },
