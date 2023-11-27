@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/dommentee/booking-site-back#readme",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "@types/bcrypt": "^5.0.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",
@@ -31,6 +32,7 @@
     "@types/jsonwebtoken": "^8.5.8",
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.15.10",
+    "@types/nodemailer": "^6.4.14",
     "@types/validator": "^13.7.14",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
@@ -42,6 +44,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^7.5.0",
     "morgan": "^1.10.0",
+    "nodemailer": "^6.9.7",
     "ts-node-dev": "^2.0.0",
     "validator": "^13.9.0"
   },
