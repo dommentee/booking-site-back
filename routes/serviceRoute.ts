@@ -1,11 +1,17 @@
-import express from 'express';
+import express from "express";
 const router = express.Router();
-import service from '../controllers/serviceController';
+import serviceController from "../controllers/serviceController";
+import {
+  authenthicateUser,
+  authorizePermission,
+} from "../middleware/authentication";
 
-const {
-    getAllService
-} = service;
+router
+  .route("/")
+  .post(
+    [authenthicateUser, authorizePermission("admin")],
+    serviceController.createService
+  )
+  .get(serviceController.getAllServices);
 
-router.route('/').get(getAllService);
-
-export default router
+export default router;

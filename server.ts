@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 //set routes app will use
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/service", serviceRouter);
+app.use("/api/v1/services", serviceRouter);
 //middleware
 app.use(notFound); //404
 app.use(errorHandlerMiddleware); //error handler

@@ -32,6 +32,7 @@ const register = async (req: Request, res: Response) => {
     verificationToken,
   });
 
+  //will need to be change for proction
   const origin = "http://localhost:3000";
   await sendVerificationEmail({
     name: user.firstName,
