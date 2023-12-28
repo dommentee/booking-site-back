@@ -14,4 +14,15 @@ router
   )
   .get(serviceController.getAllServices);
 
+router
+  .route("/:id")
+  .get(serviceController.getSingleService)
+  .patch(
+    [authenthicateUser, authorizePermission("admin")],
+    serviceController.updateService
+  )
+  .delete(
+    [authenthicateUser, authorizePermission("admin")],
+    serviceController.deleteService
+  );
 export default router;

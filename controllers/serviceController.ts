@@ -2,12 +2,8 @@ import { Request, Response } from "express";
 
 import { Service } from "../models/service";
 import { StatusCodes } from "http-status-codes";
-import { log } from "console";
+import { error, log } from "console";
 
-//   createProduct,
-//   getAllProducts,
-//   getSingleProduct,
-//   updateProduct,
 //   deleteProduct,
 //   uploadImage,
 declare global {
@@ -17,12 +13,8 @@ declare global {
     }
   }
 }
-const getAllServices = async (req: Request, res: Response) => {
-  const services = await Service.find({});
 
-  res.status(StatusCodes.OK).json({ services, count: services.length });
-};
-
+//create
 const createService = async (req: Request, res: Response) => {
   const { title, price, duration, description, image, category } = req.body;
   const user = req.user;
@@ -40,22 +32,70 @@ const createService = async (req: Request, res: Response) => {
     service,
   });
 };
-// const updateService = async (req: Request, res: Response) => {
-//   const { id: serviceId } = req.params;
 
-//   const product = await Service.findOneAndUpdate({ _id: serviceId }, req.body, {
-//     new: true
-//     runValidators: true,
-//   });
+//get all
+const getAllServices = async (req: Request, res: Response) => {
+  const services = await Service.find({});
 
-//   if (!product) {
-//     throw new CustomError.NotFoundError(`No product with id : ${productId}`);
-//   }
+  res.status(StatusCodes.OK).json({ services, count: services.length });
+};
 
-//   res.status(StatusCodes.OK).json({ product });
-// };
+//get single service
+const getSingleService = async (req: Request, res: Response) => {
+  const { id: serviceId } = req.params;
+
+  try {
+    const service = await Service.findOne({ _id: serviceId });
+
+    if (!service) {
+      throw error(`no service with the id ${serviceId}`);
+    }
+
+    res.status(StatusCodes.OK).json({ service });
+  } catch (error: any) {
+    console.error(error.msg);
+  }
+};
+
+//update
+const updateService = async (req: Request, res: Response) => {
+  const { id: serviceId } = req.params;
+
+  try {
+    const service = await Service.findByIdAndUpdate(
+      { _id: serviceId },
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+    if (!service) {
+      throw error(`no service with the id ${serviceId}`);
+    }
+    res.status(StatusCodes.OK).json({ service });
+  } catch (error: any) {
+    console.error(error.msg);
+  }
+};
+
+const deleteService = async (req: Request, res: Response) => {
+  const { id: serviceId } = req.params;
+  try {
+    const service = await Service.findByIdAndDelete({ _id: serviceId });
+    if (!service) {
+      throw error(`no service with the id ${serviceId}`);
+    }
+    res.status(StatusCodes.OK).json({ msg: "service deleted sucesfully" });
+  } catch (error: any) {
+    console.error(error.msg);
+  }
+};
 
 export default {
   getAllServices,
   createService,
+  getSingleService,
+  updateService,
+  deleteService,
 };
