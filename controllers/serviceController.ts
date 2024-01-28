@@ -4,7 +4,6 @@ import { Service } from "../models/service";
 import { StatusCodes } from "http-status-codes";
 import { error, log } from "console";
 
-//   deleteProduct,
 //   uploadImage,
 declare global {
   namespace Express {
@@ -86,7 +85,7 @@ const deleteService = async (req: Request, res: Response) => {
     if (!service) {
       throw error(`no service with the id ${serviceId}`);
     }
-    res.status(StatusCodes.OK).json({ msg: "service deleted sucesfully" });
+    res.status(StatusCodes.OK).json({ msg: "service deleted successsfully" });
   } catch (error: any) {
     console.error(error.msg);
   }

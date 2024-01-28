@@ -13,8 +13,10 @@ const register = async (req: Request, res: Response) => {
   const { firstName, lastName, email, password } = req.body;
   const emailAlreadyExist = await User.findOne({ email });
   if (emailAlreadyExist) {
-    throw new Error("email already exist");
-    // throw new customError.BadRequestError('email aleady exist');
+    return res.status(StatusCodes.CONFLICT).json({
+      success: false,
+      message: "Email alerady has an account",
+    });
   }
 
   const isFirstAccount = (await User.countDocuments({})) === 0;

@@ -16,6 +16,7 @@ import errorHandlerMiddleware from "./middleware/error-handler";
 import authRouter from "./routes/authRoute";
 import userRouter from "./routes/userRoutes";
 import serviceRouter from "./routes/serviceRoute";
+import bookingRouter from "./routes/bookingRoute";
 
 const app = express();
 dotenv.config();
@@ -40,6 +41,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/services", serviceRouter);
+app.use("/api/v1/bookings", bookingRouter);
 //middleware
 app.use(notFound); //404
 app.use(errorHandlerMiddleware); //error handler
